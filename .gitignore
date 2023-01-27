@@ -1,0 +1,5 @@
+priceTracker.log
+__pycache__
+runner.spec
+test.py
+.env
