@@ -49,7 +49,7 @@ async def get_all(session, urls):
 
 async def parse_and_save(results):
     gamesPrices = []
-    ids = []
+
 
     for html in results:
         data = html["results_html"]
@@ -59,25 +59,22 @@ async def parse_and_save(results):
         for game in games:
             try:
                 name = game.find("div", class_='col search_name ellipsis').find("span").text
-                _id = int(game.attrs['data-ds-appid'].split(",")[0])
-
-                if _id in ids:
-                    continue
-
+                name = re.sub(r'[^a-zA-Z0-9\s]', '', name)
+                name = re.sub(r'\bM{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\b', lambda x: str(roman_to_int(x.group(0))), name)
                 price = game.find("div", {"class": "search_price"}).text.strip()
 
                 try:
                     price = float(price.split("₹")[-1].strip().replace(",", '').replace(".", ","))
+                    
+                    price = round((float(price)+(float(price) * 0.25 if float(price) * 0.25 >= 400 else 400))*1.6, 2)
                 except:
                     pass
 
                 gamePrice = {
-                    '_id': _id,
                     'name': re.sub('[^A-Za-z0-9 ]+', '', name),
                     'price': price
                 }
 
-                ids.append(_id)
                 gamesPrices.append(gamePrice)
 
             except Exception as e:
@@ -88,6 +85,20 @@ async def parse_and_save(results):
 async def saveGames(allGames):
     Database().insert_many_games(allGames, 'steam')
     logging.info(f'Scraped {len(allGames)} games of Steam')
+
+def roman_to_int(roman):
+
+    if roman == '':
+        return ''
+
+    roman_dict = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
+    result = 0
+    for i in range(len(roman)):
+        if i > 0 and roman_dict[roman[i]] > roman_dict[roman[i-1]]:
+            result += roman_dict[roman[i]] - 2 * roman_dict[roman[i-1]]
+        else:
+            result += roman_dict[roman[i]]
+    return result
 
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(dbSteam())

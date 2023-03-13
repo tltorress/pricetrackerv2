@@ -10,9 +10,9 @@ import logging
 import config
 import traceback
 import re
+import json
 
-folder = os.path.dirname(os.path.realpath(__file__)).replace(
-    '\src', '').replace('\scrapers', '')
+folder = os.path.dirname(os.path.realpath(__file__)).replace('\src', '').replace('\scrapers', '')
 
 
 async def dbXBX():
@@ -55,7 +55,6 @@ async def get_all(session, urls):
 
 async def parse_and_save(results):
     gamesPrices = []
-    ids = []
 
     for html in results:
         if not html:
@@ -68,19 +67,28 @@ async def parse_and_save(results):
             try:
 
                 name = game.find('span', class_="game-collection-item-details-title").text
+                name = re.sub('[^A-Za-z0-9 ]+', '', name)
+                platform = game.find('span', class_="game-collection-item-top-platform").text
+
+                if 'crossgen' in name.lower() or 'cross-gen' in name.lower() or 'xbox one  xbox series xs' in name.lower() or 'xbox one and xbox series xs' in name.lower():
+                    platform = 'xbox one / xbox series x|s'
+    
+                price = game.find("div", class_="game-collection-item-prices").find('span').text
 
                 try:
                     price = float(game.find("div", class_="game-collection-item-prices").find('span').text.replace("₹", "").replace(",", "").strip())
+
+                    price = round(float(((float(price)-(float(price)*0.40))+((float(price)-(float(price)*0.40)))*0.56)*1.6), 2)
                 except:
                     price = game.find("div", class_="game-collection-item-prices").find('span').text.strip()
 
                 gamePrice = {
-                    'name': re.sub('[^A-Za-z0-9 ]+', '', name),
-                    'price': price
+                    'name': name,
+                    'price': price,
+                    'platform': platform
                 }
 
                 gamesPrices.append(gamePrice)
-
             except Exception as e:
                 print(traceback.format_exc())
 

@@ -55,7 +55,6 @@ async def get_all(session, urls):
 
 async def parse_and_save(results):
     gamesPrices = []
-    ids = []
 
     for html in results:
         soup = BeautifulSoup(html, "html.parser")
@@ -65,22 +64,16 @@ async def parse_and_save(results):
 
             try:
                 name = game.find("h2", class_="search-results-row-game-title").text
-                _id = game.find('div', class_='metacritic-button').attrs['data-product-id']
-
-                if _id in ids:
-                    continue
 
                 try:
                     price = round(float(game.find(
                         "div", class_="search-results-row-price").text.strip().replace("€", "")) / 0.013, 2)
+                    
+                    price = round((float(price)+(float(price) * 0.25 if float(price) * 0.25 >= 400 else 400))*1.6, 2)
                 except:
-                    price = game.find(
-                        "div", class_="search-results-row-price").text
-
-                ids.append(_id)
+                    price = game.find("div", class_="search-results-row-price").text
 
                 gamePrice = {
-                    "_id": _id,
                     "name": re.sub('[^A-Za-z0-9 ]+', '', name),
                     "price": price
                 }

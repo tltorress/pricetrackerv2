@@ -29,8 +29,8 @@ async def dbPlayStation():
 def get_urls():
     urls = []
 
-    for i in range(1, 326):
-        urls.append(f"https://psdeals.net/in-store/all-games/{i}")
+    for i in range(1, 231):
+        urls.append(f"https://psdeals.net/in-store/all-games/{i}?platforms=ps4%2Cps5")
     return urls
 
 async def get_page_data(session, url, n):
@@ -66,23 +66,38 @@ async def parse_and_save(results):
         for game in games:
             try:
                 name = game.find('span', class_="game-collection-item-details-title").text
-                _id = game.find('span', {"itemprop": 'sku'}).text
-
-                if _id in ids:
-                    continue
-
-                ids.append(_id)
+                price = game.find("div", class_="game-collection-item-prices").find('span').text
+                platform = game.find('span', class_="game-collection-item-top-platform").text
 
                 try:
-                    price = float(game.find("div", class_="game-collection-item-prices").find('span').text.replace("Rs", "").replace(",", "").replace(".", ",").strip())
-                except:
-                    price = game.find(
-                        "div", class_="game-collection-item-prices").find('span').text
+                    price = float(price.replace("Rs", "").replace(",", "").replace(".", ",").strip())
 
+                    plusPrice = round((((price*0.50))+(((price*0.50)*0.52)))*1.6, 2)
+                    proPrice = round((((price*0.25))+(((price*0.25)*0.30)))*1.6, 2) 
+                except:
+                    proPrice = price
+                    plusPrice = price 
+
+                if price == 0:
+                    continue
+
+                if re.search(r'[\w\s]+ \+ [\w\s]+', name):
+                    continue
+
+                if 'crossgen bundle' in name.lower():
+                    name.lower().replace("crossgen bundle", '')
+
+                if 'ps4' in name.lower() or 'for ps4' in name.lower():
+                    name.lower().replace('ps4', '').replace('for ps4', '')
+
+                #REPLACE ROMAN NUMBERS FROM NAME
+                name = re.sub(r'\bM{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\b', lambda x: str(roman_to_int(x.group(0))), name)
+            
                 gamePrice = {
-                    '_id': _id,
                     'name': re.sub('[^A-Za-z0-9 ]+', '', name),
-                    'price': price
+                    'plusPrice': plusPrice,
+                    'proPrice': proPrice,
+                    "platform": platform
                 }
 
                 gamesPrices.append(gamePrice)
@@ -95,6 +110,20 @@ async def parse_and_save(results):
 async def saveGamesPS4(allGames):
     Database().insert_many_games(allGames, 'ps4')
     logging.info(f'Scraped {len(allGames)} games of PSstore')
+
+def roman_to_int(roman):
+
+                if roman == '':
+                    return ''
+
+                roman_dict = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
+                result = 0
+                for i in range(len(roman)):
+                    if i > 0 and roman_dict[roman[i]] > roman_dict[roman[i-1]]:
+                        result += roman_dict[roman[i]] - 2 * roman_dict[roman[i-1]]
+                    else:
+                        result += roman_dict[roman[i]]
+                return result
 
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(dbPlayStation())
