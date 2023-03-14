@@ -1,0 +1,27 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main # cambiar "main" por el nombre de tu rama principal
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: pip3.10 install -r requirements.txt # cambiar "requirements.txt" por el nombre de tu archivo de requerimientos
+
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VPS_HOST }} # ingresar la dirección IP o el nombre de dominio de tu VPS
+        username: ${{ secrets.VPS_USERNAME }} # ingresar el nombre de usuario de tu VPS
+        key: ${{ secrets.VPS_PRIVATE_KEY }} # ingresar la clave privada SSH de tu VPS
+        script: |
+          git pull origin main # ejecutar git pull para actualizar los archivos del repositorio en tu servidor VPS
+          sudo systemctl restart jarvisAssistant
