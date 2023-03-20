@@ -24,4 +24,4 @@ jobs:
         key: ${{ secrets.VPS_PRIVATE_KEY }} # ingresar la clave privada SSH de tu VPS
         script: |
           git pull origin main # ejecutar git pull para actualizar los archivos del repositorio en tu servidor VPS
-          sudo systemctl restart jarvisAssistant
+          sudo systemctl restart priceTracker.service
