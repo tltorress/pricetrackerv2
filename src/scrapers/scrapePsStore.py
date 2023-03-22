@@ -67,14 +67,17 @@ async def parse_and_save(results):
             try:
                 name = game.find('span', class_="game-collection-item-details-title").text
                 price = game.find("div", class_="game-collection-item-prices").find('span').text
+                regular_price = price
                 platform = game.find('span', class_="game-collection-item-top-platform").text
 
                 try:
                     price = float(price.replace("Rs", "").replace(",", "").replace(".", ",").strip())
 
-                    plusPrice = round((((price*0.50))+(((price*0.50)*0.52)))*1.6, 2)
-                    proPrice = round((((price*0.25))+(((price*0.25)*0.30)))*1.6, 2) 
-                except:
+                    regular_price = price
+                    plusPrice = round(((price - (price * 0.55)) + ((price - (price * 0.55)) * 0.50)) * 1.6, 2)
+                    proPrice = round(((price - (price * 0.35)) + ((price - (price * 0.35)) * 0.30)) * 1.6, 2)
+                except Exception as e:
+                    print(e)
                     proPrice = price
                     plusPrice = price 
 
@@ -95,6 +98,7 @@ async def parse_and_save(results):
             
                 gamePrice = {
                     'name': re.sub('[^A-Za-z0-9 ]+', '', name),
+                    'price': regular_price,
                     'plusPrice': plusPrice,
                     'proPrice': proPrice,
                     "platform": platform

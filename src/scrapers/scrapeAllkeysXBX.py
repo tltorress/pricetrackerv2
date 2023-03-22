@@ -63,13 +63,17 @@ async def parse_and_save(results):
                 try:
                     price = round(float(game.find("div", class_="search-results-row-price").text.strip().replace("$", "")) / 0.013, 2)
 
-                    price = round(float(((float(price)-(float(price)*0.40))+((float(price)-(float(price)*0.40)))*0.56)*1.6), 2)
+                    regular_price = price
+                    price = round(((price - (price * 0.50)) + ((price - (price * 0.50)) * 0.50)) * 1.6, 2)
                 except:
                     price = game.find("div", class_="search-results-row-price").text
+                    regular_price = price
+
 
                 gamePrice = {
                     "name": re.sub('[^A-Za-z0-9 ]+', '', name),
-                    "price": price
+                    "streamstop_price": price,
+                    "price":regular_price
                 }
 
                 gamesPrices.append(gamePrice)

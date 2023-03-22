@@ -62,17 +62,21 @@ async def parse_and_save(results):
                 name = re.sub(r'[^a-zA-Z0-9\s]', '', name)
                 name = re.sub(r'\bM{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\b', lambda x: str(roman_to_int(x.group(0))), name)
                 price = game.find("div", {"class": "search_price"}).text.strip()
+                regular_price = price
 
                 try:
                     price = float(price.split("₹")[-1].strip().replace(",", '').replace(".", ","))
                     
+
+                    regular_price = price
                     price = round((float(price)+(float(price) * 0.25 if float(price) * 0.25 >= 400 else 400))*1.6, 2)
                 except:
                     pass
 
                 gamePrice = {
                     'name': re.sub('[^A-Za-z0-9 ]+', '', name),
-                    'price': price
+                    'streamstop_price': price,
+                    'price': regular_price
                 }
 
                 gamesPrices.append(gamePrice)

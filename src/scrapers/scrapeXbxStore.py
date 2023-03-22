@@ -74,17 +74,20 @@ async def parse_and_save(results):
                     platform = 'xbox one / xbox series x|s'
     
                 price = game.find("div", class_="game-collection-item-prices").find('span').text
+                regular_price = price
 
                 try:
                     price = float(game.find("div", class_="game-collection-item-prices").find('span').text.replace("₹", "").replace(",", "").strip())
 
-                    price = round(float(((float(price)-(float(price)*0.40))+((float(price)-(float(price)*0.40)))*0.56)*1.6), 2)
+                    regular_price = price
+                    price = round(((price - (price * 0.50)) + ((price - (price * 0.50)) * 0.50)) * 1.6, 2)
                 except:
                     price = game.find("div", class_="game-collection-item-prices").find('span').text.strip()
 
                 gamePrice = {
                     'name': name,
-                    'price': price,
+                    'streamstop_price': price,
+                    'price': regular_price,
                     'platform': platform
                 }
 
