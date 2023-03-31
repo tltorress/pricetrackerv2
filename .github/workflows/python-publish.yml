@@ -33,3 +33,4 @@ jobs:
               git remote add origin git@github.com:TomyPY/pricetrackerv2.git
               git pull origin main # ejecutar git pull para actualizar los archivos del repositorio en tu servidor VPS
               echo ${{ secrets.PASSWORD }} | sudo -S systemctl restart priceTracker.service
+            fi
