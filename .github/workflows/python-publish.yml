@@ -16,6 +16,9 @@ jobs:
     - name: Install dependencies
       run: pip3.10 install -r requirements.txt # cambiar "requirements.txt" por el nombre de tu archivo de requerimientos
 
+    - name: Remove known_hosts
+      run: rm ~/.ssh/known_hosts
+
     - name: Deploy to VPS
       uses: appleboy/ssh-action@master
       with:
