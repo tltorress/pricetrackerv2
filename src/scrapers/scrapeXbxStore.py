@@ -80,7 +80,7 @@ async def parse_and_save(results):
                     price = float(game.find("div", class_="game-collection-item-prices").find('span').text.replace("₹", "").replace(",", "").strip())
 
                     regular_price = price
-                    price = round(((price - (price * 0.50)) + ((price - (price * 0.50)) * 0.50)) * 1.6, 2)
+                    price = round(((price - (price * 0.50)) + ((price - (price * 0.50)) * 0.50)), 2)
                 except:
                     price = game.find("div", class_="game-collection-item-prices").find('span').text.strip()
 

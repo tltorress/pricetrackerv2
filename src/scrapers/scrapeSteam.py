@@ -69,7 +69,7 @@ async def parse_and_save(results):
                     
 
                     regular_price = price
-                    price = round((float(price)+(float(price) * 0.25 if float(price) * 0.25 >= 400 else 400))*1.6, 2)
+                    price = round((float(price)+(float(price) * 0.25 if float(price) * 0.25 >= 400 else 400)), 2)
                 except:
                     pass
 

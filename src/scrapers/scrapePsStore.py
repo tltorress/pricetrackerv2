@@ -29,7 +29,7 @@ async def dbPlayStation():
 def get_urls():
     urls = []
 
-    for i in range(1, 231):
+    for i in range(1, 264):
         urls.append(f"https://psdeals.net/in-store/all-games/{i}?platforms=ps4%2Cps5")
     return urls
 
@@ -74,8 +74,8 @@ async def parse_and_save(results):
                     price = float(price.replace("Rs", "").replace(",", "").replace(".", ",").strip())
 
                     regular_price = price
-                    plusPrice = round(((price - (price * 0.55)) + ((price - (price * 0.55)) * 0.50)) * 1.6, 2)
-                    proPrice = round(((price - (price * 0.35)) + ((price - (price * 0.35)) * 0.30)) * 1.6, 2)
+                    plusPrice = round(((price - (price * 0.55)) + ((price - (price * 0.55)) * 0.50)), 2)
+                    proPrice = round(((price - (price * 0.35)) + ((price - (price * 0.35)) * 0.30)), 2)
                 except Exception as e:
                     print(e)
                     proPrice = price
@@ -112,6 +112,7 @@ async def parse_and_save(results):
     await saveGamesPS4(gamesPrices)
 
 async def saveGamesPS4(allGames):
+    print(len(allGames))
     Database().insert_many_games(allGames, 'ps4')
     logging.info(f'Scraped {len(allGames)} games of PSstore')
 
