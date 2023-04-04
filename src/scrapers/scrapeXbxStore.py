@@ -30,7 +30,7 @@ async def dbXBX():
 
 def get_urls():
     urls = []
-    for i in range(1, 10):
+    for i in range(1, 177):
         urls.append(f"https://xbdeals.net/in-store/all-games/{i}")
     return urls
 
@@ -73,13 +73,14 @@ async def parse_and_save(results):
                 if 'crossgen' in name.lower() or 'cross-gen' in name.lower() or 'xbox one  xbox series xs' in name.lower() or 'xbox one and xbox series xs' in name.lower():
                     platform = 'xbox one / xbox series x|s'
     
-                regular_price = price
                 price = game.find("div", class_="game-collection-item-prices").find('span').text
+                regular_price = price
+
                 try:
                     price = float(game.find("div", class_="game-collection-item-prices").find('span').text.replace("₹", "").replace(",", "").strip())
 
                     regular_price = price
-                    price = round((price - 0.5 * price) + 0.5 * price, 2)
+                    price = round(price + 0.25 * price, 2)
                 except:
                     price = game.find("div", class_="game-collection-item-prices").find('span').text.strip()
 
