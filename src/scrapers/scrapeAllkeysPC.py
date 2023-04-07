@@ -70,9 +70,11 @@ async def parse_and_save(results):
                         "div", class_="search-results-row-price").text.strip().replace("€", "")) / 0.013, 2)
                     
                     regular_price = price
-                    price = round(price + 0.25 * price, 2)
-                    if price < 400:
-                        price = 400
+                    profit = round(price * 0.25, 2)
+                    if profit < 350:
+                        price = regular_price + 350
+                    else:
+                        price = regular_price + profit
                 except:
                     price = game.find("div", class_="search-results-row-price").text
                     regular_price = price
