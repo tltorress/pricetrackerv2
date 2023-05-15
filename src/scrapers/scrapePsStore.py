@@ -74,8 +74,8 @@ async def parse_and_save(results):
                     price = float(price.replace("Rs", "").replace(",", "").replace(".", ",").strip())
 
                     regular_price = price
-                    plusPrice = round((price - (0.35 * price)) + (0.3 * (price - (0.35 * price))), 2)
-                    proPrice = round((price - (0.55 * price)) + (0.5 * (price - (0.35 * price))), 2)
+                    plusPrice = round(price * (1-0.37), 2)
+                    proPrice = round(price * (1-0.22), 2)
                 except Exception as e:
                     print(e)
                     proPrice = price
@@ -101,6 +101,10 @@ async def parse_and_save(results):
                     'price': regular_price,
                     'plusPrice': plusPrice,
                     'proPrice': proPrice,
+                    'plusPriceNPR':plusPrice*2
+                    'proPriceNPR':proPrice*2
+                    'plusPriceUSD':round(plusPrice/65,2)
+                    'proPriceUSD':round(proPrice/65,2)
                     "platform": platform
                 }
 
