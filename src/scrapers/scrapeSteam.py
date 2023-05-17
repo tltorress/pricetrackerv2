@@ -79,7 +79,8 @@ async def parse_and_save(results):
                     streamstop_priceUSD=round(price/65,2)
 
                 except:
-                    pass
+                    streamstop_priceNPR = price
+                    streamstop_priceUSD = price
 
                 gamePrice = {
                     'name': re.sub('[^A-Za-z0-9 ]+', '', name),
