@@ -62,6 +62,8 @@ async def parse_and_save(results):
 
         soup = BeautifulSoup(html, "html.parser")
         GamesPage = soup.find_all("a", class_="game-collection-item-link")
+        streamstop_priceNPR = int
+        streamstop_priceUSD = float
 
         for game in GamesPage:
             try:
@@ -81,8 +83,9 @@ async def parse_and_save(results):
 
                     regular_price = price
                     price = round((price - (0.5 * price)) + (0.5 * (price - (0.5 * price))), 2)
-                    streamstop_priceNPR= price*2,
-                    streamstop_priceUSD= round(price/65,2),
+                    
+                    streamstop_priceNPR= price*2
+                    streamstop_priceUSD= round(price/65,2)
                 except:
                     streamstop_priceNPR= price
                     streamstop_priceUSD= price
