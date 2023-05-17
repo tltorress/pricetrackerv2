@@ -76,10 +76,18 @@ async def parse_and_save(results):
                     regular_price = price
                     plusPrice = round(price * (1-0.37), 2)
                     proPrice = round(price * (1-0.22), 2)
+                    plusPriceNPR=plusPrice*2
+                    proPriceNPR=proPrice*2
+                    plusPriceUSD=round(plusPrice/65,2)
+                    proPriceUSD=round(proPrice/65,2)
                 except Exception as e:
                     print(e)
                     proPrice = price
-                    plusPrice = price 
+                    plusPrice = price
+                    plusPriceNPR=price
+                    proPriceNPR=price
+                    plusPriceUSD=price
+                    proPriceUSD=price
 
                 if price == 0:
                     continue
@@ -101,10 +109,10 @@ async def parse_and_save(results):
                     'price': regular_price,
                     'plusPrice': plusPrice,
                     'proPrice': proPrice,
-                    'plusPriceNPR':plusPrice*2
-                    'proPriceNPR':proPrice*2
-                    'plusPriceUSD':round(plusPrice/65,2)
-                    'proPriceUSD':round(proPrice/65,2)
+                    'plusPriceNPR':plusPriceNPR,
+                    'proPriceNPR':proPriceNPR,
+                    'plusPriceUSD':plusPriceUSD,
+                    'proPriceUSD':proPriceUSD,
                     "platform": platform
                 }
 

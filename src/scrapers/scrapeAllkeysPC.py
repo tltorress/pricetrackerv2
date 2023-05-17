@@ -75,6 +75,8 @@ async def parse_and_save(results):
                         price = regular_price + 350
                     else:
                         price = regular_price + profit
+                    streamstop_priceNPR= price*2
+                    streamstop_priceUSD=round(price/65,2)
                 except:
                     price = game.find("div", class_="search-results-row-price").text
                     regular_price = price
@@ -83,8 +85,8 @@ async def parse_and_save(results):
                 gamePrice = {
                     "name": re.sub('[^A-Za-z0-9 ]+', '', name),
                     "streamstop_price": price,
-                    'streamstop_priceNPR': price*2
-                    'streamstop_priceUSD':round(price/65,2)
+                    'streamstop_priceNPR': streamstop_priceNPR,
+                    'streamstop_priceUSD': streamstop_priceUSD,
                     "price":regular_price
                 }
 

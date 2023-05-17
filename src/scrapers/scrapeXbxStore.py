@@ -81,14 +81,18 @@ async def parse_and_save(results):
 
                     regular_price = price
                     price = round((price - (0.5 * price)) + (0.5 * (price - (0.5 * price))), 2)
+                    streamstop_priceNPR= price*2,
+                    streamstop_priceUSD= round(price/65,2),
                 except:
+                    streamstop_priceNPR= price
+                    streamstop_priceUSD= price
                     price = game.find("div", class_="game-collection-item-prices").find('span').text.strip()
 
                 gamePrice = {
                     'name': name,
                     'streamstop_price': price,
-                    'streamstop_priceNPR': price*2,
-                    'streamstop_priceUSD': round(price/65,2),
+                    'streamstop_priceNPR': streamstop_priceNPR,
+                    'streamstop_priceUSD': streamstop_priceUSD,
                     'price': regular_price,
                     'platform': platform
                 }
